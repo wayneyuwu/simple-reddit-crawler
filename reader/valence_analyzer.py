@@ -14,11 +14,13 @@ with open('1000_rank.csv', 'wb') as csvfile:
 	count = 0
 	for pid, info in post_bank.iteritems():
 		print info['title']
-		comments = unicodedata.normalize('NFKD', info['comment_block']).encode(
-			'ascii', 'ignore').translate(None, string.punctuation)
-		if (len(comments)) > 100:
-			valence_score = lexicon.analyze(comments, normalize=True)['negative_emotion']
-			spamwriter.writerow([valence_score, info['url']])
+		for comm in info['comment_bank']:
+			comment = unicodedata.normalize('NFKD', comm).encode('ascii', 'ignore').translate(None, string.punctuation)
+		if (len(comment)) > 50:
+			valence_score = \
+				lexicon.analyze(comment, normalize=True)['negative_emotion'] \
+				- lexicon.analyze(comment, normalize=True)['positive_emotion']
+			spamwriter.writerow([valence_score, info['url'], comment[:20]])
 			count += 1
 
 	print count

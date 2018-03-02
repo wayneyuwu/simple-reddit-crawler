@@ -18,10 +18,14 @@ for i in range(365):
 		post_bank[submission.id] = {
 			'title': submission.title,
 			'url': submission.url,
-			'comment_block': ''}
+			'comment_bank': []}
+
 		for c in submission.comments.list():
 			if hasattr(c, 'body'):
-				post_bank[submission.id]['comment_block'] += c.body + ' '
+				# skip the author replies
+				if c.author == submission.author:
+					continue
+				post_bank[submission.id]['comment_bank'].append(c.body)
 		print count
 		count += 1
 	timestamp -= 3600*24
